@@ -11,20 +11,20 @@ const io = new Server(httpServer, {
   cors: { origin: "*" },
 });
 
-let buzzedUser: string | null = null;
+let buzzedUsers: string[] = [];
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   socket.on("buzz", (name: string) => {
-    if (!buzzedUser) {
-      buzzedUser = name;
-      io.emit("buzzed", buzzedUser);
+    if (!buzzedUsers.includes(name)) {
+      buzzedUsers.push(name);
+      io.emit("buzzed", name);
     }
   });
 
   socket.on("reset", () => {
-    buzzedUser = null;
+    buzzedUsers = [];
     io.emit("reset");
   });
 
@@ -33,6 +33,7 @@ io.on("connection", (socket) => {
   });
 });
 
+
 httpServer.listen(4000, () => {
-  console.log("Server running on http://localhost:4000");
+  console.log("Server running on production");
 });
